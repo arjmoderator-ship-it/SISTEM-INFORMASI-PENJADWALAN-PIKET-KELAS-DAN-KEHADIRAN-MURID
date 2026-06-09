@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiPiket Digital - SMK Cibitung 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        /* Login Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-box {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .login-header .logo i { font-size: 35px; color: white; }
+        .login-header h1 { font-size: 28px; font-weight: 800; color: white; margin-bottom: 8px; }
+        .login-header p { color: #94a3b8; font-size: 14px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .form-group label i { margin-right: 8px; color: #818cf8; }
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4); }
+        
+        .login-info {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #334155;
+            text-align: center;
+        }
+        .login-info p { color: #64748b; font-size: 11px; margin: 5px 0; }
+        
+        /* Dashboard Styles */
+        .navbar {
+            background: #1e293b;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #334155;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 12px; }
+        .nav-brand i { font-size: 28px; color: #818cf8; }
+        .nav-brand h3 { font-size: 18px; font-weight: 800; color: white; margin: 0; }
+        .nav-brand small { font-size: 10px; color: #94a3b8; }
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
+        .badge {
+            background: #334155;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+        .btn-logout {
+            background: #ef4444;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-logout:hover { background: #dc2626; }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            padding: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .sidebar-left { display: flex; flex-direction: column; gap: 24px; }
+        .card {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #334155;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-header h3 { font-size: 14px; font-weight: 700; color: #818cf8; margin: 0; }
+        .card-header h3 i { margin-right: 6px; }
+        .card-subtitle { font-size: 11px; color: #64748b; margin-bottom: 15px; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #334155;
+        }
+        .stat-icon i { font-size: 32px; }
+        .icon-calendar-week { color: #818cf8; }
+        .stat-info h4 { font-size: 11px; color: #94a3b8; margin: 0 0 5px; }
+        .stat-info p { font-size: 24px; font-weight: 800; color: white; margin: 0; }
+        
+        .jadwal-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+        .jadwal-day {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .jadwal-day h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #818cf8;
+            margin: 0 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #334155;
+        }
+        .jadwal-item {
+            font-size: 11px;
+            padding: 8px;
+            background: #1e293b;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .galeri-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .galeri-item {
+            background: #0f172a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .galeri-item img { width: 100%; height: 120px; object-fit: cover; }
+        .galeri-info { padding: 10px; }
+        .galeri-info p { font-size: 10px; color: #94a3b8; margin: 0; }
+        
+        .list-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+        }
+        .list-item-status {
+            font-size: 10px;
+            color: #34d399;
+        }
+        .list-item-job {
+            color: #818cf8;
+        }
+        .request-status {
+            background: #4f46e520;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .no-data {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e293b;
+            border-left: 4px solid #4f46e5;
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            z-index: 1100;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { right: -400px; }
+            to { right: 20px; }
+        }
+        .list-item { list-style: none; padding: 8px 0; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; }
+        .daftar-siswa-item { padding: 8px 0; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; }
+        .petugas-item { padding: 8px 0; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; }
+        .permohonan-item { font-size: 11px; padding: 8px; background: #1e293b; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .galeri-documentation { text-align: center; color: #64748b; font-size: 12px; }
+        .jadwal-list-empty { text-align: center; color: #64748b; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-box">
+                <div class="login-header">
+                    <div class="logo"><i class="fas fa-school"></i></div>
+                    <h1>SiPiket Digital</h1>
+                    <p>SMK Cibitung 1 • Pilih kelas & masuk sebagai siswa atau admin</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="jurusanSelect"><i class="fas fa-graduation-cap"></i> Jurusan</label>
+                        <select id="jurusanSelect" class="form-control" title="Pilih Jurusan" required>
+                            <option value="">Pilih Jurusan</option>
+                            <option value="pplg">PPLG</option>
+                            <option value="akl">AKL</option>
+                            <option value="tmi">TMI</option>
+                            <option value="mplb">MPLB</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-door-open"></i> Kelas</label>
+                        <select id="kelasSelect" class="form-control" title="Pilih kelas" required>
+                            <option value="">Pilih Kelas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Mode Login</label>
+                        <select id="modeLogin" class="form-control" title="Pilih mode login" required>
+                            <option value="siswa">🎓 Siswa (Masuk dengan NIS/Absen)</option>
+                            <option value="admin">👨‍💼 Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> <span id="nisLabel">Nomor Absen (1-35)</span></label>
+                        <input type="text" id="nisInput" class="form-control" placeholder="Masukkan nomor absen (1-35)">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="passwordInput" class="form-control" placeholder="Masukkan password (untuk admin)">
+                    </div>
+                    <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Masuk ke Dashboard</button>
+                    <div class="login-info">
+                        <p>*Siswa: nomor absen (1-35) | Admin: password = "admin123"</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboardPage" class="page">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-school"></i>
+                <div><h3>SiPiket</h3><small id="userInfo">SMK Cibitung 1 • Kelompok 5</small></div>
+            </div>
+            <div class="nav-actions">
+                <span id="userMode" class="badge">Mode: Anggota</span>
+                <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <div class="dashboard-container">
+            <div class="sidebar-left">
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-calendar-day"></i> HARI INI</h3><span class="badge" id="hariIniLabel">Senin</span></div>
+                    <div class="card-body">
+                        <p class="card-subtitle">Petugas Piket Hari Ini:</p>
+                        <ul id="petugasHariIni"></ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-users"></i> PESERTA DIDIK (35)</h3><span class="badge" id="activeRatio">35/35 Aktif</span></div>
+                    <div class="card-body"><ul id="daftarSiswa"></ul></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-exchange-alt"></i> Permohonan Tukar</h3><span class="badge" id="pendingCount">0 Pending</span></div>
+                    <div class="card-body"><div id="daftarPermohonan"></div></div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h4>TOTAL HADIR</h4><p id="totalHadir">0</p></div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-times-circle"></i></div><div class="stat-info"><h4>TOTAL ALPHA</h4><p id="totalAlpha">0</p></div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-week icon-calendar-week"></i></div><div class="stat-info"><h4>HARI KERJA</h4><p>Senin - Jumat</p></div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-random icon-tukar"></i></div><div class="stat-info"><h4>TUKAR JADWAL</h4><p id="totalTukar">0</p></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Jadwal Piket Mingguan X PPLG 1</h3></div>
+                    <div class="card-body"><div class="jadwal-grid" id="jadwalMingguan"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-images"></i> Galeri Dokumentasi</h3><span class="badge" id="docCount">0 Berkas</span></div>
+                    <div class="card-body">
+                        <button class="btn-primary" onclick="showModal('unggahDokumentasi')"><i class="fas fa-upload"></i> Unggah Bukti</button>
+                        <div id="galeriDokumentasi" class="galeri-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modalAjukanTukar" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Ajukan Tukar Hari Piket</h3><button class="close-btn" onclick="closeModal('ajukanTukar')">&times;</button></div>
+            <form id="formTukarJadwal">
+                <div class="form-group"><label>Pilih Diri Anda</label><select id="swapSender" class="form-control" required><option value="">-- Pilih --</option></select></div>
+                <div class="form-group"><label>Pilih Rekan Tukar</label><select id="swapReceiver" class="form-control" required><option value="">-- Pilih --</option></select></div>
+                <div class="form-group"><label>Alasan</label><textarea id="swapReason" class="form-control" rows="3" required placeholder="Tuliskan alasan..."></textarea></div>
+                <button type="submit" class="btn-primary">Ajukan Permohonan</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalUnggahDokumentasi" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Unggah Dokumentasi Piket</h3><button class="close-btn" onclick="closeModal('unggahDokumentasi')">&times;</button></div>
+            <form id="formDokumentasi">
+                <div class="form-group"><label>Pilih Petugas Piket</label><select id="docMember" class="form-control" required><option value="">-- Pilih --</option></select></div>
+                <div class="form-group"><label>Foto Bukti</label><input type="file" id="docImage" accept="image/*" class="form-control"></div>
+                <div class="form-group"><label>Catatan Laporan</label><textarea id="docNotes" class="form-control" rows="3" required placeholder="Contoh: Pojok kanan sudah disapu bersih..."></textarea></div>
+                <button type="submit" class="btn-primary">Unggah Dokumentasi</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Siswa 35 orang
+        const NAMA_SISWA = [
+            "ABDILLAH IMNI ISMAIL AL AMIN", "AISYAH KHANZA SALSABILA", "ANNISA NUR HADI", "AYUDHIA KHAILA DAVA",
+            "BAGUS PRATAMA HIDAYAT", "BELVANA RASITA", "CARISSA TINOV ANASTACIA TAME", "CHARISA DIAN MAHRI",
+            "DIANA ALIA SAFITRI", "DIO WAHAB ASSYIFA'A", "FADLAN ABDILLAH", "FAOZAN SIGIT SAPUTRA",
+            "FEBRYAN MAULANA", "FLOINTONA AZZAHRA", "HAFIDZ ANNAS", "IDZHAR SETYA IKHWANA", "JESIKA YULIANA",
+            "KARINA AGUSTINA RAMADHANI", "LATHIFAH LINTANG SETITI PRASE", "LOUIS ENGRASIA PUTRI",
+            "M. RAFKA FILANTARA", "MADINA AULIA HASANAH", "MUHAMAD ZIBRAN", "MUHAMMAD ANWAR IKHSAN",
+            "MUHAMMAD FAKHRI", "MUHAMMAD RAFI MUZAKI", "NAILA PEBRIA PUTRI", "NAUFAL CAHYA PRATAMA",
+            "NOVIANA ZAHRA RAHMANI", "PRAMADYA PAMUNGKAS", "RAKHA ZIDAN ARKANA", "SELVI DAMAYANTI",
+            "SYIFA AULIA RAMADHANI", "VINOLIA CINTA NOVIZAYANTI", "ZAINAL I'LMI"
+        ];
+
+        let members = NAMA_SISWA.map((name, idx) => ({ id: idx + 1, name: name, jk: idx % 2 === 0 ? 'L' : 'P', status: 'Aktif' }));
+        let schedules = [];
+        let attendance = [];
+        let swapRequests = [];
+        let documentations = [];
+        let isAdmin = false;
+
+        // Generate jadwal
+        function generateSchedule() {
+            let shuffled = [...members];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            let idx = 0;
+            for (let day = 1; day <= 5; day++) {
+                for (let slot = 1; slot <= 7; slot++) {
+                    if (idx >= shuffled.length) break;
+                    let job = slot === 1 ? 'Nyapu Kiri' : slot === 2 ? 'Nyapu Kanan' : (slot % 2 === 0 ? 'Nganter MBG' : 'Rapihin Meja');
+                    schedules.push({ id: schedules.length + 1, id_anggota: shuffled[idx].id, id_hari: day, job: job });
+                    idx++;
+                }
+            }
+        }
+        generateSchedule();
+
+        function getDayName() { const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; return days[new Date().getDay()]; }
+        function getDayId(dayName) { const map = { 'Senin': 1, 'Selasa': 2, 'Rabu': 3, 'Kamis': 4, 'Jumat': 5 }; return map[dayName] || 1; }
+        function showToast(msg) { const toast = document.createElement('div'); toast.className = 'toast'; toast.innerText = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2500); }
+        function saveData() { localStorage.setItem('sipiket_data', JSON.stringify({ members, schedules, attendance, swapRequests, documentations })); }
+        function loadData() { const saved = localStorage.getItem('sipiket_data'); if (saved) { const d = JSON.parse(saved); members = d.members; schedules = d.schedules; attendance = d.attendance; swapRequests = d.swapRequests; documentations = d.documentations; } }
+        loadData();
+
+        function renderDashboard() {
+            document.getElementById('hariIniLabel').innerText = getDayName();
+            document.getElementById('userMode').innerHTML = isAdmin ? '🛡️ Mode: Admin' : '🧑‍🎓 Mode: Anggota';
+            
+            const hadir = attendance.filter(a => a.status === 'Hadir').length;
+            const alpa = attendance.filter(a => a.status === 'Alpa').length;
+            document.getElementById('totalHadir').innerText = hadir;
+            document.getElementById('totalAlpha').innerText = alpa;
+            document.getElementById('totalTukar').innerText = swapRequests.length;
+            document.getElementById('pendingCount').innerText = `${swapRequests.filter(s => s.status === 'Pending').length} Pending`;
+            document.getElementById('docCount').innerText = `${documentations.length} Berkas`;
+            document.getElementById('activeRatio').innerText = `${members.filter(m => m.status === 'Aktif').length}/${members.length} Aktif`;
+            
+            // Daftar siswa
+            document.getElementById('daftarSiswa').innerHTML = members.map(m => `<li style="padding:8px 0;border-bottom:1px solid #334155;display:flex;justify-content:space-between"><span>${m.name}</span><span style="font-size:10px;color:#34d399">${m.status}</span></li>`).join('');
+            
+            // Petugas hari ini
+            const todayId = getDayId(getDayName());
+            const todaySchedules = schedules.filter(s => s.id_hari === todayId);
+            document.getElementById('petugasHariIni').innerHTML = todaySchedules.map(s => {
+                const m = members.find(m => m.id === s.id_anggota);
+                return `<li style="padding:8px 0;border-bottom:1px solid #334155;display:flex;justify-content:space-between"><span>${m?.name}</span><span style="color:#818cf8">${s.job}</span></li>`;
+            }).join('');
+            
+            // Jadwal
+            const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+            document.getElementById('jadwalMingguan').innerHTML = days.map((day, idx) => {
+                const daySched = schedules.filter(s => s.id_hari === idx + 1);
+                return `<div class="jadwal-day"><h4>${day}</h4>${daySched.map(s => {
+                    const m = members.find(m => m.id === s.id_anggota);
+                    return `<div class="jadwal-item"><span>${m?.name?.substring(0, 12)}</span><span>${s.job}</span></div>`;
+                }).join('')}</div>`;
+            }).join('');
+            
+            // Permohonan
+            document.getElementById('daftarPermohonan').innerHTML = swapRequests.length ? swapRequests.map(req => {
+                const fromM = members.find(m => m.id === req.fromMemberId);
+                const toM = members.find(m => m.id === req.toMemberId);
+                return `<div class="jadwal-item"><span>${fromM?.name} ↔ ${toM?.name}</span><span style="background:#4f46e520;padding:2px 8px;border-radius:10px">${req.status}</span></div>`;
+            }).join('') : '<p style="text-align:center;color:#64748b;font-size:12px">Belum ada permohonan</p>';
+            
+            // Galeri
+            document.getElementById('galeriDokumentasi').innerHTML = documentations.length ? documentations.map(doc => {
+                const m = members.find(m => m.id === doc.memberId);
+                return `<div class="galeri-item"><img src="${doc.image}" onerror="this.src='https://picsum.photos/300/200'"><div class="galeri-info"><p><strong>${m?.name}</strong> - ${doc.job}</p><p>${doc.notes}</p></div></div>`;
+            }).join('') : '<p style="text-align:center;color:#64748b;font-size:12px">Belum ada dokumentasi</p>';
+            
+            // Dropdowns
+            const memberOptions = members.filter(m => m.status === 'Aktif').map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+            if (document.getElementById('swapSender')) document.getElementById('swapSender').innerHTML = '<option value="">-- Pilih --</option>' + memberOptions;
+            if (document.getElementById('swapReceiver')) document.getElementById('swapReceiver').innerHTML = '<option value="">-- Pilih --</option>' + memberOptions;
+            if (document.getElementById('docMember')) document.getElementById('docMember').innerHTML = '<option value="">-- Pilih --</option>' + memberOptions;
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const mode = document.getElementById('modeLogin').value;
+            const nis = document.getElementById('nisInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+            
+            if (mode === 'admin') {
+                if (password === 'admin123') {
+                    isAdmin = true;
+                    document.getElementById('loginPage').classList.remove('active');
+                    document.getElementById('dashboardPage').classList.add('active');
+                    renderDashboard();
+                    showToast('🛡️ Login Admin Berhasil!');
+                } else showToast('❌ Password admin salah!');
+            } else {
+                const absen = parseInt(nis);
+                if (isNaN(absen) || absen < 1 || absen > 35) showToast('❌ Nomor absen tidak valid (1-35)');
+                else if (members.find(m => m.id === absen)) {
+                    isAdmin = false;
+                    document.getElementById('loginPage').classList.remove('active');
+                    document.getElementById('dashboardPage').classList.add('active');
+                    renderDashboard();
+                    showToast(`🎓 Selamat datang, ${members.find(m => m.id === absen).name}`);
+                } else showToast('❌ Siswa tidak ditemukan');
+            }
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            isAdmin = false;
+            document.getElementById('dashboardPage').classList.remove('active');
+            document.getElementById('loginPage').classList.add('active');
+            showToast('👋 Anda telah logout');
+        });
+        
+        window.showModal = (id) => document.getElementById(`modal${id === 'ajukanTukar' ? 'AjukanTukar' : 'UnggahDokumentasi'}`).classList.add('active');
+        window.closeModal = (id) => document.getElementById(`modal${id === 'ajukanTukar' ? 'AjukanTukar' : 'UnggahDokumentasi'}`).classList.remove('active');
+        
+        document.getElementById('formTukarJadwal')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fromId = parseInt(document.getElementById('swapSender').value);
+            const toId = parseInt(document.getElementById('swapReceiver').value);
+            if (!fromId || !toId) { showToast('Pilih pengirim dan penerima'); return; }
+            swapRequests.push({ id: Date.now(), fromMemberId: fromId, toMemberId: toId, reason: document.getElementById('swapReason').value, status: 'Pending' });
+            saveData();
+            closeModal('ajukanTukar');
+            renderDashboard();
+            showToast('Permohonan tukar diajukan!');
+        });
+        
+        document.getElementById('formDokumentasi')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const memberId = parseInt(document.getElementById('docMember').value);
+            const notes = document.getElementById('docNotes').value;
+            const file = document.getElementById('docImage').files[0];
+            if (!memberId) { showToast('Pilih petugas'); return; }
+            const sched = schedules.find(s => s.id_anggota === memberId);
+            const process = (src) => {
+                documentations.unshift({ id: Date.now(), memberId, date: new Date().toISOString().split('T')[0], job: sched?.job || 'Petugas', image: src, notes, status: 'Pending' });
+                saveData();
+                closeModal('unggahDokumentasi');
+                renderDashboard();
+                showToast('Dokumentasi diunggah!');
+            };
+            if (file) { const reader = new FileReader(); reader.onload = e => process(e.target.result); reader.readAsDataURL(file); }
+            else process('https://picsum.photos/300/200');
+        });
+        
+        function populateKelas() {
+            const jurusan = document.getElementById('jurusanSelect').value;
+            const kelasSelect = document.getElementById('kelasSelect');
+            if (!jurusan) { kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>'; return; }
+            let kelasList = [];
+            for (let i = 10; i <= 12; i++) {
+                for (let j = 1; j <= 3; j++) kelasList.push(`${i} ${jurusan.toUpperCase()} ${j}`);
+            }
+            kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>' + kelasList.map(k => `<option value="${k}">${k}</option>`).join('');
+        }
+        document.getElementById('jurusanSelect').addEventListener('change', populateKelas);
+        populateKelas();
+        renderDashboard();
+    </script>
+</body>
+</html>
